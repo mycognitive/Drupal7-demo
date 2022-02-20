@@ -15,8 +15,11 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
+    "postbuild": [
+      "echo postbuild"
+    ],
     "postinstall": [
-      "cp node_modules/php-wasm/php-web.* public/"
+      "echo cp -v node_modules/php-wasm/php-web.* public/"
     ],
     "start": "next start"
   },
