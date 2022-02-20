@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "download-file": "^0.1.5",
     "eslint": "8.9.0",
     "eslint-config-next": "12.1.0",
     "next": "^12.1.0"
@@ -16,7 +17,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "postbuild": [
-      "echo postbuild"
+      "node postbuild.js"
     ],
     "postinstall": [
       "echo cp -v node_modules/php-wasm/php-web.* public/"
