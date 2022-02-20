@@ -1,0 +1,21 @@
+{
+  "devDependencies": {
+    "eslint": "8.9.0",
+    "eslint-config-next": "12.1.0",
+    "next": "^12.1.0"
+  },
+  "dependencies": {
+    "php-wasm": "^0.0.4-b",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "name": "drupal8-demo",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "version": "0.1.0"
+}
