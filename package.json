@@ -12,10 +12,11 @@
   "name": "drupal8-demo",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "next dev",
+    "lint": "next lint",
+    "postinstall": [ "cp node_modules/php-wasm/php-web.* public/" ],
+    "start": "next start"
   },
   "version": "0.1.0"
 }
