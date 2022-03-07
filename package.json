@@ -20,7 +20,7 @@
       "node postbuild.js"
     ],
     "postinstall": [
-      "echo cp -v node_modules/php-wasm/php-web.* public/"
+      "cp -v node_modules/php-wasm/php-web.* src/public/"
     ],
     "start": "next start"
   },
