@@ -1,11 +1,31 @@
 /** @type {import('next').NextConfig} */
+const CopyPlugin = require('copy-webpack-plugin')
 const nextConfig = {
-	reactStrictMode: true,
-	webpack: function (config, options) {
-		console.log("Webpack version:", options.webpack.version); // 5.18.0
-		config.experiments = {asyncWebAssembly: true};
-		return config;
-	},
+  reactStrictMode: true,
+  // Perform customizations to webpack config.
+  webpack: function (config, options) {
+    console.log("Webpack version:", options.webpack.version); // 5.18.0
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true
+    };
+    config.plugins = [
+      ...config.plugins,
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "./node_modules/php-wasm/php-web.wasm",
+            to: "./static/chunks/"
+          },
+          {
+            from: "./node_modules/php-wasm/php-web-drupal.wasm",
+            to: "./static/chunks/"
+          }
+        ],
+      }),
+    ];
+    return config;
+  },
 }
 
 module.exports = nextConfig
