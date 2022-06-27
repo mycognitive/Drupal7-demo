@@ -10,30 +10,34 @@ export default class Drupal extends React.Component {
 
   // Invoked after a component is mounted (inserted into the tree).
   async componentDidMount() {
-    const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
-    this.php = new PhpWeb;
-    console.log(this.php);
-    this.setState({ready: true})
+    try {
+      const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
+      this.php = new PhpWeb;
+      this.setState({ready: true});
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   // Invoked immediately after updating occurs.
   componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate');
   }
 
   php_test() {
-    return this.php.run('<?php echo "Hello, world!";').retVal;
+    console.log(this.php.run('<?php echo "Hello, world!";').then(retVal => { console.log('retVal: ', retVal); }));
+    //return this.php.run('<?php echo "Hello, world!";').then(retVal => { console.log('retVal: ', retVal); });
   }
 
   render() {
     if (this.state.ready) {
+      console.log('Ready');
       const hello = this.php_test();
-      console.log(hello);
-      console.log('php_test: ', this.php_test());
       return (
           <div className={styles.drupal}>
             Drupal will be here!
             {hello}
-            {this.php_test()}
           </div>
       )
     }
