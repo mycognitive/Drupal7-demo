@@ -5,47 +5,70 @@ export default class Drupal extends React.Component {
   constructor(props) {
     super(props);
     this.php = {};
-    this.state = {ready: false};
+    this.state = {error: false, output: '', pending: false, ready: false};
   }
 
   // Invoked after a component is mounted (inserted into the tree).
   async componentDidMount() {
-    try {
-      const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
-      this.php = new PhpWeb;
-      this.setState({ready: true});
-    }
-    catch (e) {
-      console.log(e);
+    if (!this.state.ready) {
+      try {
+        const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
+        this.php = new PhpWeb;
+        this.php.addEventListener('error', (event) => {
+          console.log(event);
+        });
+        this.php.addEventListener('output', (event) => {
+          console.log(event);
+          this.setState({output: event.detail[0]});
+          this.setState({pending: false});
+        });
+        this.php.addEventListener('ready', () => {
+          this.setState({ready: true});
+        });
+      }
+      catch (e) {
+        console.log(e);
+      }
     }
   }
 
   // Invoked immediately after updating occurs.
   componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate');
+    // console.log('componentDidUpdate');
   }
 
-  php_test() {
-    console.log(this.php.run('<?php echo "Hello, world!";').then(retVal => { console.log('retVal: ', retVal); }));
-    //return this.php.run('<?php echo "Hello, world!";').then(retVal => { console.log('retVal: ', retVal); });
+  php_hello() {
+    if (!this.state.pending && this.state.output == '') {
+      this.php.run('<?php echo "Hello, world!";')
+        .then(retVal => {
+          this.setState({pending: true});
+      });
+    }
+  }
+
+  php_info() {
+    if (!this.state.pending && this.state.output == '') {
+      this.php.run('<?php php_info();')
+        .then(retVal => {
+          this.setState({pending: true});
+      });
+    }
   }
 
   render() {
     if (this.state.ready) {
-      console.log('Ready');
-      const hello = this.php_test();
+      this.php_hello();
       return (
-          <div className={styles.drupal}>
-            Drupal will be here!
-            {hello}
-          </div>
+        <div className={styles.drupal}>
+          {this.state.output}
+        </div>
       )
     }
     else {
       return (
-          <div className={styles.drupal}>
-            Loading...
-          </div>
+        <div className={styles.drupal}>
+          Loading...
+        </div>
       )
     }
   }
