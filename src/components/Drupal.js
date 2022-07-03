@@ -7,7 +7,7 @@ export default class Drupal extends React.Component {
   constructor(props) {
     super(props);
     this.php = {};
-    this.state = {error: false, output: '', pending: false, ready: false};
+    this.state = {error: '', output: '', pending: false, ready: false};
   }
 
   // Invoked after a component is mounted (inserted into the tree).
@@ -18,10 +18,11 @@ export default class Drupal extends React.Component {
         this.php = new PhpWeb;
         this.php.addEventListener('error', (event) => {
           console.error(event.detail[0]);
+          this.setState({error: this.state.error + event.detail[0]});
         });
         this.php.addEventListener('output', (event) => {
           console.log(event);
-          this.setState({output: event.detail[0]});
+          this.setState({output: this.state.output + event.detail[0]});
           this.setState({pending: false});
           // console.log(event.detail[0]);
         });
