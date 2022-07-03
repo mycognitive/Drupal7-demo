@@ -17,7 +17,7 @@ export default class Drupal extends React.Component {
         const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
         this.php = new PhpWeb;
         this.php.addEventListener('error', (event) => {
-          console.error(event);
+          console.error(event.detail[0]);
         });
         this.php.addEventListener('output', (event) => {
           console.log(event);
