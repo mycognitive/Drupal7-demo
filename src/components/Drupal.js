@@ -75,7 +75,10 @@ export default class Drupal extends React.Component {
     if (this.state.ready) {
       this.php_index();
       return (
-        <div className={styles.drupal} dangerouslySetInnerHTML={{__html: this.state.output}} />
+        <iframe
+          className={styles.drupal}
+          sandbox="allow-same-origin allow-scripts allow-forms"
+          srcdoc={this.state.output} />
       )
     }
     else {
