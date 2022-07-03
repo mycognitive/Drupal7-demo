@@ -14,4 +14,5 @@ set_error_handler(function(...$args) use($stderr, &$errors){
 });
 
 echo "Hello, world!";
+phpinfo();
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
