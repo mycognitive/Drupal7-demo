@@ -21,6 +21,7 @@ export default class Drupal extends React.Component {
           console.log(event);
           this.setState({output: event.detail[0]});
           this.setState({pending: false});
+          // console.log(event.detail[0]);
         });
         this.php.addEventListener('ready', () => {
           this.setState({ready: true});
@@ -59,9 +60,7 @@ export default class Drupal extends React.Component {
     if (this.state.ready) {
       this.php_hello();
       return (
-        <div className={styles.drupal}>
-          {this.state.output}
-        </div>
+        <div className={styles.drupal} dangerouslySetInnerHTML={{__html: this.state.output}} />
       )
     }
     else {
