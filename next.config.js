@@ -9,6 +9,10 @@ const nextConfig = {
       ...config.experiments,
       asyncWebAssembly: true
     };
+    config.module.rules = [
+      ...config.module.rules,
+      { test: /\.php$/, use: 'raw-loader' }
+    ];
     config.plugins = [
       ...config.plugins,
       new CopyPlugin({
