@@ -1,6 +1,6 @@
 import React from "react";
+import index from "./index.php"
 import styles from './Drupal.module.css'
-const phpIndexFile = require("./index.php");
 
 export default class Drupal extends React.Component {
 
@@ -17,7 +17,7 @@ export default class Drupal extends React.Component {
         const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
         this.php = new PhpWeb;
         this.php.addEventListener('error', (event) => {
-          console.log(event);
+          console.error(event);
         });
         this.php.addEventListener('output', (event) => {
           console.log(event);
@@ -51,14 +51,11 @@ export default class Drupal extends React.Component {
 
   php_index() {
     if (!this.state.pending && this.state.output == '') {
-      fetch(phpIndexFile)
-        .then(response => response.text())
-        .then(text =>
-          this.php.run(text)
-            .then(retVal => {
-              this.setState({pending: true});
-            })
-        );
+      this.php.run(index)
+        .then(retVal => {
+          this.setState({pending: true});
+        })
+        .catch(e => console.error(e.message));
     }
   }
 
@@ -78,7 +75,7 @@ export default class Drupal extends React.Component {
         <iframe
           className={styles.drupal}
           sandbox="allow-same-origin allow-scripts allow-forms"
-          srcdoc={this.state.output} />
+          srcDoc={this.state.output} />
       )
     }
     else {
