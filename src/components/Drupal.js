@@ -1,7 +1,9 @@
 import React from "react";
 import styles from './Drupal.module.css'
+const phpIndexFile = require("./index.php");
 
 export default class Drupal extends React.Component {
+
   constructor(props) {
     super(props);
     this.php = {};
@@ -47,6 +49,19 @@ export default class Drupal extends React.Component {
     }
   }
 
+  php_index() {
+    if (!this.state.pending && this.state.output == '') {
+      fetch(phpIndexFile)
+        .then(response => response.text())
+        .then(text =>
+          this.php.run(text)
+            .then(retVal => {
+              this.setState({pending: true});
+            })
+        );
+    }
+  }
+
   php_info() {
     if (!this.state.pending && this.state.output == '') {
       this.php.run('<?php php_info();')
@@ -58,7 +73,7 @@ export default class Drupal extends React.Component {
 
   render() {
     if (this.state.ready) {
-      this.php_hello();
+      this.php_index();
       return (
         <div className={styles.drupal} dangerouslySetInnerHTML={{__html: this.state.output}} />
       )
