@@ -1,4 +1,4 @@
-//require("./php-web.js")
+require("./php-web.js")
 import React from "react";
 
 export default class Php extends React.Component {

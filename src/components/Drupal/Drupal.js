@@ -1,3 +1,4 @@
+import Php from "../Php/Php.js"
 import React from "react";
 import index from "./index.php"
 import styles from './Drupal.module.css'
