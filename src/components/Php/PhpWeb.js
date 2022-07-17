@@ -1,4 +1,4 @@
-import { PhpBase } from "./PhpBase";
+import { PhpBase } from "php-wasm/PhpBase";
 
 const PhpBinary = require("./php-web");
 

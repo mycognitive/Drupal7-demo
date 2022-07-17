@@ -1,7 +1,6 @@
+import PhpWeb from "./PhpWeb.js"
 import React from "react";
-import styles from './Php.module.css'
-
-//require("./php-web.js")
+import styles from "./Php.module.css"
 
 export default class Php extends React.Component {
 
@@ -15,7 +14,7 @@ export default class Php extends React.Component {
   async componentDidMount() {
     if (!this.state.ready) {
       try {
-        const PhpWeb = (await require('php-wasm/PhpWeb')).PhpWeb;
+        const PhpWeb = (await require('./PhpWeb')).PhpWeb;
         this.php = new PhpWeb;
         this.php.addEventListener('error', (event) => {
           console.error(event.detail[0]);
