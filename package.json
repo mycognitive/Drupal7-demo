@@ -19,12 +19,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "postbuild": [
-      "node postbuild.js"
-    ],
-    "postinstall": [
-      "cp -v node_modules/php-wasm/php-web.* src/public/"
-    ],
+    "postbuild": "node postbuild.js",
+    "postinstall": "cp -v node_modules/php-wasm/php-web.* src/public/",
     "start": "next start"
   },
   "version": "0.1.0"
