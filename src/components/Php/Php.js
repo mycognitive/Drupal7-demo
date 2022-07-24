@@ -41,6 +41,18 @@ export default class Php extends React.Component {
     // console.log('componentDidUpdate');
   }
 
+  php_files() {
+    if (!this.state.pending && this.state.output == '') {
+      this.php.run('<?php'
+        + '$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("."));'
+        + 'foreach ($it as $name => $entry) { echo $name . "<br/>"; }'
+        )
+        .then(retVal => {
+          this.setState({pending: true});
+      });
+    }
+  }
+
   php_hello() {
     if (!this.state.pending && this.state.output == '') {
       this.php.run('<?php echo "Hello, world!";')
