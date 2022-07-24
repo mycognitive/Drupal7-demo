@@ -18,6 +18,10 @@ const nextConfig = {
       new CopyPlugin({
         patterns: [
           {
+            from: "./build/drupal-8.9.20.zip",
+            to: "./static/build/"
+          },
+          {
             from: "./node_modules/php-wasm/php-web.wasm",
             to: "./static/chunks/"
           },

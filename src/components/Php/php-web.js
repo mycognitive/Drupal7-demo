@@ -39,7 +39,7 @@ var PHP = (function () {
           throw "using preloaded data can only be done on a web page or in a web worker";
         }
         var PACKAGE_NAME = "../../build/drupal-8.9.20.zip";
-        var REMOTE_PACKAGE_BASE = "_next/static/chunks/drupal-8.9.20.zip";
+        var REMOTE_PACKAGE_BASE = "_next/static/build/drupal-8.9.20.zip";
         if (
           typeof Module["locateFilePackage"] === "function" &&
           !Module["locateFile"]
