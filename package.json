@@ -8,6 +8,7 @@
     "raw-loader": "^4.0.2"
   },
   "dependencies": {
+    "jszip": "^3.10.0",
     "php-wasm": "^0.0.5",
     "react": "17.0.2",
     "react-dom": "17.0.2",
