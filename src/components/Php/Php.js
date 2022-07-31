@@ -38,7 +38,9 @@ export default class Php extends React.Component {
 
   // Invoked immediately after updating occurs.
   componentDidUpdate(prevProps, prevState) {
-    // console.log('componentDidUpdate');
+    if (prevState.ready != this.state.ready) {
+      // console.log('componentDidUpdate');
+    }
   }
 
   php_files() {
