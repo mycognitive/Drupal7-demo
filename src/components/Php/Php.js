@@ -21,7 +21,7 @@ export default class Php extends React.Component {
           this.setState({error: this.state.error + event.detail[0]});
         });
         this.php.addEventListener('output', (event) => {
-          console.log(event);
+          // console.log(event);
           this.setState({output: this.state.output + event.detail[0]});
           this.setState({pending: false});
           // console.log(event.detail[0]);
