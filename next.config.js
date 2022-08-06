@@ -2,6 +2,14 @@
 const CopyPlugin = require('copy-webpack-plugin')
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: '/admin/(.*)',
+        destination: '/drupal',
+      }
+    ]
+  },
   // Perform customizations to webpack config.
   webpack: function (config, options) {
     console.log("Webpack version:", options.webpack.version); // 5.18.0
