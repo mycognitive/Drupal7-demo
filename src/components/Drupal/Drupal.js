@@ -20,7 +20,9 @@ export default class Drupal extends Php {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
       if (this.state.ready) {
-        // console.log("files: ", this.coreFiles);
+        console.log(
+          `[Debug]: Loaded files: ${Object.keys(this.coreFiles).length}`
+        );
       }
     }
     if (prevState.timeLoadZip != this.state.timeLoadZip) {
@@ -32,35 +34,33 @@ export default class Drupal extends Php {
   async loadDrupalFiles() {
     var timeLoadZipStart = new Date();
     var zip = new JSZip();
-    // GET request using fetch with set headers
-    const headers = { "Content-Type": "application/zip", Encoding: "binary" };
-    let result = fetch("_next/static/build/drupal-8.9.20.zip", { headers })
+    // GET request using fetch with set headers.
+    let data = fetch("_next/static/build/drupal-8.9.20.zip", {
+      "Content-Type": "application/zip",
+      Encoding: "binary",
+    })
       // Fetch a zip file.
       .then((response) => response.blob())
       // Load a zip file.
       .then(function (data) {
+        return data;
+      })
+      .catch((error) => console.log(error));
+    // Loads a zip data and read list of files.
+    zip
+      .loadAsync(await data)
+      .then(function (zip) {
+        // Create an object with list of file entries.
         var filesList = {};
-        zip
-          .loadAsync(data)
-          .then(function (zip) {
-            // Create an object with list of file entries.
-            zip.forEach(function (relativePath, zipEntry) {
-              let path = zipEntry.name.substring(
-                zipEntry.name.indexOf("/") + 1
-              );
-              filesList[path] = zipEntry;
-            });
-            return filesList;
-          })
-          .then((retVal) => {
-            console.log(`[Debug]: Loaded files: ${Object.keys(retVal).length}`);
-          })
-          .catch((error) => console.log(error));
+        zip.forEach(function (relativePath, zipEntry) {
+          let path = zipEntry.name.substring(zipEntry.name.indexOf("/") + 1);
+          filesList[path] = zipEntry;
+        });
+        // Returns list of loaded files.
         return filesList;
       })
-      .then((retVal) => {
-        // Returns list of loaded files.
-        this.coreFiles = retVal;
+      .then((filesList) => {
+        this.coreFiles = filesList;
         this.setState({ ready: true });
         this.setState({ timeLoadZip: new Date() - timeLoadZipStart });
       })
