@@ -24,8 +24,25 @@ export default class Php extends React.Component {
     onRuntimeInitialized: function () {
       console.log("onRuntimeInitialized");
     },
+    onFileOpen: function (path, fs) {
+      var node = this["FS_createDataFile"](
+        fs.cwd(),
+        path,
+        "",
+        true,
+        true,
+        true
+      );
+      console.log(path, node);
+      return node;
+    },
     preInit: [], // List of functions to call.
     preRun: [], // List of functions to call.
+    preloadPlugins: {
+      handleDrupal: function (byteArray, fullname, finish, f) {
+        console.log("preloadPlugins", fullname);
+      },
+    },
     preloadedImages: {},
     // print: console.log.bind(console),
     printErr: console.warn.bind(console),
