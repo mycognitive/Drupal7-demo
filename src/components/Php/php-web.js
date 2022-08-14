@@ -2622,6 +2622,9 @@ var PHP = (function () {
             created = true;
           }
         }
+        if (!node && Module && Module["onFileOpen"]) {
+          node = Module["onFileOpen"](path, this);
+        }
         if (!node) {
           throw new FS.ErrnoError(44);
         }
