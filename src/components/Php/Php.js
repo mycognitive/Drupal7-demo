@@ -4,12 +4,15 @@ import { PhpBase } from "php-wasm/PhpBase";
 const PhpBinary = require("./php-web");
 
 export class PhpWeb extends PhpBase {
+  phpWebRef = React.createRef();
   constructor(args = {}) {
     super(PhpBinary, args);
   }
 }
 
 export default class Php extends React.Component {
+  php = {};
+  phpRef = React.createRef();
   phpWebArgs = {
     INITIAL_MEMORY: 1073741824,
     arguments: [],
@@ -22,7 +25,7 @@ export default class Php extends React.Component {
       console.error(what);
     },
     onRuntimeInitialized: function () {
-      console.log("onRuntimeInitialized");
+      console.debug("onRuntimeInitialized");
     },
     onFileOpen: function (path, fs) {
       var node = this["FS_createDataFile"](
@@ -33,14 +36,14 @@ export default class Php extends React.Component {
         true,
         true
       );
-      console.log(path, node);
+      console.debug(path, node);
       return node;
     },
     preInit: [], // List of functions to call.
     preRun: [], // List of functions to call.
     preloadPlugins: {
       handleDrupal: function (byteArray, fullname, finish, f) {
-        console.log("preloadPlugins", fullname);
+        console.debug("preloadPlugins", fullname);
       },
     },
     preloadedImages: {},
@@ -51,17 +54,21 @@ export default class Php extends React.Component {
       throw toThrow;
     },
     setStatus: function (status) {
-      console.log(status);
+      console.debug(status);
     },
     thisProgram: "NextJS",
     // "locateFile": function(file, size) { return "WASM"; },
     // "wasmBinary": "foo",
   };
+  state = {
+    error: "",
+    output: "",
+    pending: false,
+    ready: false,
+  };
 
   constructor(props) {
     super(props);
-    this.php = {};
-    this.state = { error: "", output: "", pending: false, ready: false };
   }
 
   // Invoked after a component is mounted (inserted into the tree).
@@ -94,7 +101,11 @@ export default class Php extends React.Component {
   // Invoked immediately after updating occurs.
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
-      // console.log('componentDidUpdate');
+      if (this.state.ready) {
+        this.php_info();
+        // this.php_require();
+        this.props.setReady();
+      }
     }
   }
 
@@ -137,18 +148,17 @@ export default class Php extends React.Component {
   }
 
   render() {
-    if (this.state.ready) {
-      this.php_info();
-      //this.php_require();
-      return (
-        <iframe
-          className={styles.php}
-          sandbox="allow-same-origin allow-scripts allow-forms"
-          srcDoc={this.state.output}
-        />
-      );
-    } else {
-      return <div className={styles.php}>Loading...</div>;
-    }
+    return this.state.ready ? (
+      <iframe
+        className={styles.php}
+        ref={this.phpRef}
+        sandbox="allow-same-origin allow-scripts allow-forms"
+        srcDoc={this.state.output}
+      />
+    ) : (
+      <div className={styles.php} ref={this.phpRef}>
+        Loading...
+      </div>
+    );
   }
 }
