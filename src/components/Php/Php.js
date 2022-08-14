@@ -4,9 +4,13 @@ import { PhpBase } from "php-wasm/PhpBase";
 const PhpBinary = require("./php-web");
 
 export class PhpWeb extends PhpBase {
-  phpWebRef = React.createRef();
+  files = [];
+  //phpWebRef = React.createRef();
   constructor(args = {}) {
     super(PhpBinary, args);
+  }
+  updateFiles(files_new) {
+    this.files = this.files.concat(files_new);
   }
 }
 
@@ -21,26 +25,21 @@ export default class Php extends React.Component {
       return false;
     },
     noExitRuntime: false,
-    onAbort: function (what) {
-      console.error(what);
-    },
+    noInitialRun: false,
+    onAbort: this.onAbort,
+    onExit: this.onExit,
     onRuntimeInitialized: function () {
       console.debug("onRuntimeInitialized");
     },
     onFileOpen: function (path, fs) {
-      var node = this["FS_createDataFile"](
-        fs.cwd(),
-        path,
-        "",
-        true,
-        true,
-        true
-      );
+      var createDataFile = this["FS_createDataFile"];
+      var data = this.readFile(path, fs.cwd());
+      var node = createDataFile(fs.cwd(), path, data, true, true, true);
       console.debug(path, node);
       return node;
     },
-    preInit: [], // List of functions to call.
-    preRun: [], // List of functions to call.
+    preInit: [this.onPreInit],
+    preRun: [this.onPreRun],
     preloadPlugins: {
       handleDrupal: function (byteArray, fullname, finish, f) {
         console.debug("preloadPlugins", fullname);
@@ -49,6 +48,7 @@ export default class Php extends React.Component {
     preloadedImages: {},
     // print: console.log.bind(console),
     printErr: console.warn.bind(console),
+    readFile: this.readFile,
     quit: function (status, toThrow) {
       console.error(status);
       throw toThrow;
@@ -88,12 +88,14 @@ export default class Php extends React.Component {
         });
         this.php.addEventListener("ready", () => {
           this.setState({ ready: true });
+          this.php.updateFiles(["foo"]);
+          console.debug("ready", this.php);
         });
         this.php.addEventListener("custom", (event) => {
-          console.log("custom", event.detail);
+          console.debug("custom", event.detail);
         });
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
   }
@@ -102,11 +104,28 @@ export default class Php extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
       if (this.state.ready) {
-        this.php_info();
-        // this.php_require();
+        // this.php_info();
+        this.php_require();
         this.props.setReady();
+        this.props.setRef(this.phpRef);
       }
     }
+  }
+
+  onAbort(what) {
+    console.error(what);
+  }
+
+  onExit(status) {
+    console.debug("exit", status);
+  }
+
+  onPreInit() {
+    console.debug("preInit");
+  }
+
+  onPreRun() {
+    console.debug("preRun");
   }
 
   php_files() {
@@ -145,6 +164,11 @@ export default class Php extends React.Component {
         this.setState({ pending: true });
       });
     }
+  }
+
+  readFile(path, cwd) {
+    console.debug("readFile", path, cwd);
+    return path;
   }
 
   render() {

@@ -8,6 +8,7 @@ export default class Drupal extends React.Component {
   coreFiles = [];
   state = {
     phpReady: false,
+    phpRef: null,
     ready: false,
     timeLoadZip: 0.0,
   };
@@ -25,11 +26,11 @@ export default class Drupal extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.phpReady !== this.state.phpReady && this.state.phpReady) {
       console.debug("Php is ready.");
+      // console.debug("Php1: ", this.state.phpRef);
+      // console.debug("Php2: ", this.state.phpRef["current"]);
     }
     if (prevState.ready != this.state.ready && this.state.ready) {
-      console.debug(
-        `Loaded files: ${Object.keys(this.coreFiles).length}`
-      );
+      console.debug(`Loaded files: ${Object.keys(this.coreFiles).length}`);
     }
     if (prevState.timeLoadZip != this.state.timeLoadZip) {
       console.debug(`timeLoadZip: ${this.state.timeLoadZip}ms`);
@@ -85,11 +86,12 @@ export default class Drupal extends React.Component {
   }
 
   setPhpReady = () => this.setState({ phpReady: true });
+  setPhpRef = (ref) => this.setState({ phpRef: ref });
 
   render() {
     return (
       <div className={styles.drupal}>
-        <Php setReady={this.setPhpReady} />
+        <Php setReady={this.setPhpReady} setRef={this.setPhpRef} />
       </div>
     );
   }
