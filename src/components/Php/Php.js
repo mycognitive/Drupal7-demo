@@ -1,36 +1,74 @@
-import PhpWeb from "./PhpWeb.js"
 import React from "react";
-import styles from "./Php.module.css"
+import styles from "./Php.module.css";
+import { PhpBase } from "php-wasm/PhpBase";
+const PhpBinary = require("./php-web");
+
+export class PhpWeb extends PhpBase {
+  constructor(args = {}) {
+    super(PhpBinary, args);
+  }
+}
 
 export default class Php extends React.Component {
+  phpWebArgs = {
+    INITIAL_MEMORY: 1073741824,
+    arguments: [],
+    expectedDataFileDownloads: 1,
+    getPreloadedPackage: function (pkg_name, pkg_size) {
+      return false;
+    },
+    noExitRuntime: false,
+    onAbort: function (what) {
+      console.error(what);
+    },
+    onRuntimeInitialized: function () {
+      console.log("onRuntimeInitialized");
+    },
+    preInit: [], // List of functions to call.
+    preRun: [], // List of functions to call.
+    preloadedImages: {},
+    // print: console.log.bind(console),
+    printErr: console.warn.bind(console),
+    quit: function (status, toThrow) {
+      console.error(status);
+      throw toThrow;
+    },
+    setStatus: function (status) {
+      console.log(status);
+    },
+    thisProgram: "NextJS",
+    // "locateFile": function(file, size) { return "WASM"; },
+    // "wasmBinary": "foo",
+  };
 
   constructor(props) {
     super(props);
     this.php = {};
-    this.state = {error: '', output: '', pending: false, ready: false};
+    this.state = { error: "", output: "", pending: false, ready: false };
   }
 
   // Invoked after a component is mounted (inserted into the tree).
   async componentDidMount() {
     if (!this.state.ready) {
       try {
-        const PhpWeb = (await require('./PhpWeb')).PhpWeb;
-        this.php = new PhpWeb;
-        this.php.addEventListener('error', (event) => {
+        this.php = new PhpWeb(this.phpWebArgs);
+        this.php.addEventListener("error", (event) => {
           console.error(event.detail[0]);
-          this.setState({error: this.state.error + event.detail[0]});
+          this.setState({ error: this.state.error + event.detail[0] });
         });
-        this.php.addEventListener('output', (event) => {
+        this.php.addEventListener("output", (event) => {
           // console.log(event);
-          this.setState({output: this.state.output + event.detail[0]});
-          this.setState({pending: false});
+          this.setState({ output: this.state.output + event.detail[0] });
+          this.setState({ pending: false });
           // console.log(event.detail[0]);
         });
-        this.php.addEventListener('ready', () => {
-          this.setState({ready: true});
+        this.php.addEventListener("ready", () => {
+          this.setState({ ready: true });
         });
-      }
-      catch (e) {
+        this.php.addEventListener("custom", (event) => {
+          console.log("custom", event.detail);
+        });
+      } catch (e) {
         console.log(e);
       }
     }
@@ -44,31 +82,39 @@ export default class Php extends React.Component {
   }
 
   php_files() {
-    if (!this.state.pending && this.state.output == '') {
-      this.php.run('<?php'
-        + '$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("."));'
-        + 'foreach ($it as $name => $entry) { echo $name . "<br/>"; }'
+    if (!this.state.pending && this.state.output == "") {
+      this.php
+        .run(
+          "<?php" +
+            '$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("."));' +
+            'foreach ($it as $name => $entry) { echo $name . "<br/>"; }'
         )
-        .then(retVal => {
-          this.setState({pending: true});
-      });
+        .then((retVal) => {
+          this.setState({ pending: true });
+        });
     }
   }
 
   php_hello() {
-    if (!this.state.pending && this.state.output == '') {
-      this.php.run('<?php echo "Hello, world!";')
-        .then(retVal => {
-          this.setState({pending: true});
+    if (!this.state.pending && this.state.output == "") {
+      this.php.run('<?php echo "Hello, world!";').then((retVal) => {
+        this.setState({ pending: true });
       });
     }
   }
 
   php_info() {
-    if (!this.state.pending && this.state.output == '') {
-      this.php.run('<?php phpinfo();')
-        .then(retVal => {
-          this.setState({pending: true});
+    if (!this.state.pending && this.state.output == "") {
+      this.php.run("<?php phpinfo();").then((retVal) => {
+        this.setState({ pending: true });
+      });
+    }
+  }
+
+  php_require() {
+    if (!this.state.pending && this.state.output == "") {
+      this.php.run('<?php require("README.md");').then((retVal) => {
+        this.setState({ pending: true });
       });
     }
   }
@@ -76,19 +122,16 @@ export default class Php extends React.Component {
   render() {
     if (this.state.ready) {
       this.php_info();
+      //this.php_require();
       return (
         <iframe
           className={styles.php}
           sandbox="allow-same-origin allow-scripts allow-forms"
-          srcDoc={this.state.output} />
-      )
-    }
-    else {
-      return (
-        <div className={styles.php}>
-          Loading...
-        </div>
-      )
+          srcDoc={this.state.output}
+        />
+      );
+    } else {
+      return <div className={styles.php}>Loading...</div>;
     }
   }
 }
