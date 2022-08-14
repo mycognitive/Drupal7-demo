@@ -4,11 +4,16 @@ import React from "react";
 import index from "./index.php";
 import styles from "./Drupal.module.css";
 
-export default class Drupal extends Php {
+export default class Drupal extends React.Component {
+  coreFiles = [];
+  state = {
+    phpReady: false,
+    ready: false,
+    timeLoadZip: 0.0,
+  };
+
   constructor(props) {
     super(props);
-    this.coreFiles = [];
-    this.state = { ready: false, timeLoadZip: 0.0 };
   }
 
   // Invoked after a component is mounted (inserted into the tree).
@@ -18,15 +23,16 @@ export default class Drupal extends Php {
 
   // Invoked immediately after updating occurs.
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.ready != this.state.ready) {
-      if (this.state.ready) {
-        console.log(
-          `[Debug]: Loaded files: ${Object.keys(this.coreFiles).length}`
-        );
-      }
+    if (prevState.phpReady !== this.state.phpReady && this.state.phpReady) {
+      console.debug("Php is ready.");
+    }
+    if (prevState.ready != this.state.ready && this.state.ready) {
+      console.debug(
+        `Loaded files: ${Object.keys(this.coreFiles).length}`
+      );
     }
     if (prevState.timeLoadZip != this.state.timeLoadZip) {
-      console.log(`[Debug]: timeLoadZip: ${this.state.timeLoadZip}ms`);
+      console.debug(`timeLoadZip: ${this.state.timeLoadZip}ms`);
     }
   }
 
@@ -78,10 +84,12 @@ export default class Drupal extends Php {
     }
   }
 
+  setPhpReady = () => this.setState({ phpReady: true });
+
   render() {
     return (
       <div className={styles.drupal}>
-        <Php />
+        <Php setReady={this.setPhpReady} />
       </div>
     );
   }
