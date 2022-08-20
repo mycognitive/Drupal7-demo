@@ -85,13 +85,42 @@ export default class Drupal extends React.Component {
     }
   }
 
+  readFile = (path, cwd, _this) => {
+    path = path[0] == "/" ? path.substring(1) : path;
+    if (this.state.ready && this.coreFiles[path]) {
+      let dataResult = null;
+      let dataReady = false;
+      let promise = (async () => {
+        this.coreFiles[path]
+          .async("string")
+          .then(function (data) {
+            console.log("data", data);
+            dataReady = true;
+            dataResult = data;
+            return data;
+          })
+          .catch((error) => {
+            dataReady = true;
+            dataResult = "";
+            return "";
+          });
+      })();
+      console.log("promise", dataReady, promise);
+    }
+    return "";
+  };
+
   setPhpReady = () => this.setState({ phpReady: true });
   setPhpRef = (ref) => this.setState({ phpRef: ref });
 
   render() {
     return (
       <div className={styles.drupal}>
-        <Php setReady={this.setPhpReady} setRef={this.setPhpRef} />
+        <Php
+          readFile={this.readFile}
+          setReady={this.setPhpReady}
+          setRef={this.setPhpRef}
+        />
       </div>
     );
   }

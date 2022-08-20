@@ -33,9 +33,9 @@ export default class Php extends React.Component {
     },
     onFileOpen: function (path, fs) {
       var createDataFile = this["FS_createDataFile"];
-      var data = this.readFile(path, fs.cwd());
-      var node = createDataFile(fs.cwd(), path, data, true, true, true);
-      console.debug(path, node);
+      var data = this.readFile(path, fs.cwd(), this.this);
+      var node = data.length != "" ? createDataFile(fs.cwd(), path, data, true, true, true) : undefined;
+      console.debug("onFileOpen", path, node);
       return node;
     },
     preInit: [this.onPreInit],
@@ -56,6 +56,7 @@ export default class Php extends React.Component {
     setStatus: function (status) {
       console.debug(status);
     },
+    this: this,
     thisProgram: "NextJS",
     // "locateFile": function(file, size) { return "WASM"; },
     // "wasmBinary": "foo",
@@ -160,15 +161,15 @@ export default class Php extends React.Component {
 
   php_require() {
     if (!this.state.pending && this.state.output == "") {
-      this.php.run('<?php require("README.md");').then((retVal) => {
+      this.php.run('<?php require("README.txt");').then((retVal) => {
         this.setState({ pending: true });
       });
     }
   }
 
-  readFile(path, cwd) {
+  readFile(path, cwd, _this) {
     console.debug("readFile", path, cwd);
-    return path;
+    return _this.props.readFile(path, cwd, _this);
   }
 
   render() {
