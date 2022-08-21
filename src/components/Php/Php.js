@@ -34,7 +34,10 @@ export default class Php extends React.Component {
     onFileOpen: function (path, fs) {
       var createDataFile = this["FS_createDataFile"];
       var data = this.readFile(path, fs.cwd(), this.this);
-      var node = data.length != "" ? createDataFile(fs.cwd(), path, data, true, true, true) : undefined;
+      var node =
+        data.length != ""
+          ? createDataFile(fs.cwd(), path, data, true, true, true)
+          : undefined;
       console.debug("onFileOpen", path, node);
       return node;
     },
