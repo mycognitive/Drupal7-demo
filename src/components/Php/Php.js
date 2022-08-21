@@ -35,10 +35,10 @@ export default class Php extends React.Component {
       var createDataFile = this["FS_createDataFile"];
       var data = this.readFile(path, fs.cwd(), this.this);
       var node =
-        data.length != ""
+        data != null
           ? createDataFile(fs.cwd(), path, data, true, true, true)
           : undefined;
-      console.debug("onFileOpen", path, node);
+      console.debug("onFileOpen", path, node, data ? data.length : null);
       return node;
     },
     preInit: [this.onPreInit],
@@ -108,8 +108,8 @@ export default class Php extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
       if (this.state.ready) {
-        // this.php_info();
-        this.php_require();
+        this.php_info();
+        // this.php_require();
         this.props.setReady();
         this.props.setRef(this.phpRef);
       }
@@ -164,14 +164,13 @@ export default class Php extends React.Component {
 
   php_require() {
     if (!this.state.pending && this.state.output == "") {
-      this.php.run('<?php require("README.txt");').then((retVal) => {
+      this.php.run('<?php require("index.php");').then((retVal) => {
         this.setState({ pending: true });
       });
     }
   }
 
   readFile(path, cwd, _this) {
-    console.debug("readFile", path, cwd);
     return _this.props.readFile(path, cwd, _this);
   }
 
