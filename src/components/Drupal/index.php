@@ -13,6 +13,10 @@ set_error_handler(function(...$args) use($stderr, &$errors){
   fwrite($stderr, print_r($args, 1));
 });
 
+//$docroot = '/drupal-8.9.20/';
+//chdir($docroot);
+define('DRUPAL_ROOT', getcwd());
+//require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
+
 echo "Hello, world!";
-phpinfo();
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);

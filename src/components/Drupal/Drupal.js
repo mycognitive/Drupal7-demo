@@ -1,6 +1,6 @@
 import Php from "../Php/Php.js";
 import React from "react";
-import index from "./index.php";
+import indexFile from "./index.php";
 import styles from "./Drupal.module.css";
 import {
   zip,
@@ -117,17 +117,6 @@ export default class Drupal extends React.Component {
       .catch((error) => console.log(error));
   }
 
-  php_index() {
-    if (!this.state.pending && this.state.output == "") {
-      this.php
-        .run(index)
-        .then((retVal) => {
-          this.setState({ pending: true });
-        })
-        .catch((e) => console.error(e.message));
-    }
-  }
-
   readFile = (path, cwd, _this) => {
     if (this.state.ready) {
       path = path[0] == "/" ? path.substring(1) : path;
@@ -146,6 +135,7 @@ export default class Drupal extends React.Component {
     return (
       <div className={styles.drupal}>
         <Php
+          index={indexFile}
           readFile={this.readFile}
           setReady={this.setPhpReady}
           setRef={this.setPhpRef}
