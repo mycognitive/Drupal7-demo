@@ -2,48 +2,7 @@ import Php from "../Php/Php.js";
 import React from "react";
 import indexFile from "./index.php";
 import styles from "./Drupal.module.css";
-import {
-  zip,
-  unzip,
-  unzipSync,
-  AsyncUnzipInflate,
-  Zip,
-  Unzip,
-  UnzipInflate,
-} from "fflate";
-
-const downloadFilesFromZip = async (url) => {
-  // Based on: https://stackoverflow.com/a/66700077/55075
-  console.log("Downloading from " + url + "...");
-  const unzipper = new Unzip();
-  unzipper.register(AsyncUnzipInflate);
-  unzipper.filter = (file) => {
-    console.log(file.name);
-  };
-  unzipper.onfile = (file) => {
-    //console.log("Got", file.name);
-    const rs = new ReadableStream({
-      start(controller) {
-        file.ondata = (err, dat, final) => {
-          controller.enqueue(dat);
-          if (final) controller.close();
-        };
-        file.start();
-      },
-    });
-    createWriteStream(file.name, rs);
-  };
-  const res = await fetch(url);
-  const reader = res.body.getReader();
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) {
-      unzipper.push(new Uint8Array(0), true);
-      break;
-    }
-    unzipper.push(value);
-  }
-};
+import { unzipSync } from "fflate";
 
 export default class Drupal extends React.Component {
   coreFiles = [];
@@ -57,10 +16,6 @@ export default class Drupal extends React.Component {
 
   constructor(props) {
     super(props);
-    this.unzipper = new Unzip();
-    //this.unzipper.register(UnzipInflate); // or: AsyncUnzipInflate
-    this.unzipper.register(AsyncUnzipInflate);
-    //downloadFilesFromZip("_next/static/build/drupal-8.9.20.zip");
   }
 
   // Invoked after a component is mounted (inserted into the tree).
@@ -82,8 +37,6 @@ export default class Drupal extends React.Component {
   }
 
   // Load Drupal files from ZIP.
-  // @todo: Convert to readable stream.
-  // @see: https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams
   async loadDrupalFiles() {
     var timeLoadZipStart = new Date();
     // GET request using fetch with set headers.
