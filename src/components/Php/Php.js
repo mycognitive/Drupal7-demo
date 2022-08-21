@@ -108,8 +108,11 @@ export default class Php extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
       if (this.state.ready) {
-        this.php_info();
-        // this.php_require();
+        if (this.props.index != undefined) {
+          this.php_run(this.props.index);
+        } else {
+          this.php_info();
+        }
         this.props.setReady();
         this.props.setRef(this.phpRef);
       }
@@ -151,6 +154,17 @@ export default class Php extends React.Component {
       this.php.run('<?php echo "Hello, world!";').then((retVal) => {
         this.setState({ pending: true });
       });
+    }
+  }
+
+  php_run(data) {
+    if (!this.state.pending && this.state.output == "") {
+      this.php
+        .run(data)
+        .then((retVal) => {
+          this.setState({ pending: true });
+        })
+        .catch((e) => console.error(e.message));
     }
   }
 
