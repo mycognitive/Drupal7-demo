@@ -2,7 +2,6 @@ import Php from "../Php/Php.js";
 import React from "react";
 import index from "./index.php";
 import styles from "./Drupal.module.css";
-import { createWriteStream } from "streamsaver";
 import {
   zip,
   unzip,
@@ -18,6 +17,9 @@ const downloadFilesFromZip = async (url) => {
   console.log("Downloading from " + url + "...");
   const unzipper = new Unzip();
   unzipper.register(AsyncUnzipInflate);
+  unzipper.filter = (file) => {
+    console.log(file.name);
+  };
   unzipper.onfile = (file) => {
     //console.log("Got", file.name);
     const rs = new ReadableStream({
@@ -45,6 +47,7 @@ const downloadFilesFromZip = async (url) => {
 
 export default class Drupal extends React.Component {
   coreFiles = [];
+  corePrefix = "drupal-8.9.20/";
   state = {
     phpReady: false,
     phpRef: null,
@@ -54,9 +57,10 @@ export default class Drupal extends React.Component {
 
   constructor(props) {
     super(props);
-    //this.unzipper = new Unzip();
+    this.unzipper = new Unzip();
     //this.unzipper.register(UnzipInflate); // or: AsyncUnzipInflate
-    downloadFilesFromZip("_next/static/build/drupal-8.9.20.zip");
+    this.unzipper.register(AsyncUnzipInflate);
+    //downloadFilesFromZip("_next/static/build/drupal-8.9.20.zip");
   }
 
   // Invoked after a component is mounted (inserted into the tree).
@@ -68,8 +72,6 @@ export default class Drupal extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.phpReady !== this.state.phpReady && this.state.phpReady) {
       console.debug("Php is ready.");
-      // console.debug("Php1: ", this.state.phpRef);
-      // console.debug("Php2: ", this.state.phpRef["current"]);
     }
     if (prevState.ready != this.state.ready && this.state.ready) {
       console.debug(`Loaded files: ${Object.keys(this.coreFiles).length}`);
@@ -92,34 +94,27 @@ export default class Drupal extends React.Component {
       // Fetch a zip file.
       .then((response) => response.blob())
       // Load a zip file.
-      .then(function (data) {
-        const zipArray = new Uint8Array(data);
-        console.log(zipArray);
-        //const files = unzipSync(zipArray);
-        return data;
-      })
+      .then((blob) =>
+        blob.arrayBuffer().then((arr) => {
+          // Create an object with list of file entries.
+          var filesList = {};
+          // Loads a zip data and read list of files.
+          filesList = unzipSync(new Uint8Array(arr), {
+            filter(file) {
+              // Filter out unwanted files.
+              if (!file.name.endsWith(".txt")) {
+                return true;
+              }
+              return false;
+            },
+          });
+          this.coreFiles = filesList;
+          this.corePrefix = Object.keys(filesList)[0];
+          this.setState({ ready: true });
+          this.setState({ timeLoadZip: new Date() - timeLoadZipStart });
+        })
+      )
       .catch((error) => console.log(error));
-    // Loads a zip data and read list of files.
-    /*
-    zip
-      .loadAsync(await data)
-      .then(function (zip) {
-        // Create an object with list of file entries.
-        var filesList = {};
-        zip.forEach(function (relativePath, zipEntry) {
-          let path = zipEntry.name.substring(zipEntry.name.indexOf("/") + 1);
-          filesList[path] = zipEntry;
-        });
-        // Returns list of loaded files.
-        return filesList;
-      })
-      .then((filesList) => {
-        this.coreFiles = filesList;
-        this.setState({ ready: true });
-        this.setState({ timeLoadZip: new Date() - timeLoadZipStart });
-      })
-      .catch((error) => console.log(error));
-      */
   }
 
   php_index() {
@@ -134,30 +129,14 @@ export default class Drupal extends React.Component {
   }
 
   readFile = (path, cwd, _this) => {
-    path = path[0] == "/" ? path.substring(1) : path;
-    if (this.state.ready && this.coreFiles[path]) {
-      /*
-      let dataResult = null;
-      let dataReady = false;
-      let promise = (async () => {
-        this.coreFiles[path]
-          .async("string")
-          .then(function (data) {
-            console.log("data", data);
-            dataReady = true;
-            dataResult = data;
-            return data;
-          })
-          .catch((error) => {
-            dataReady = true;
-            dataResult = "";
-            return "";
-          });
-      })();
-      console.log("promise", dataReady, promise);
-      */
+    if (this.state.ready) {
+      path = path[0] == "/" ? path.substring(1) : path;
+      let pathKey = this.corePrefix + path;
+      if (this.coreFiles[pathKey]) {
+        return this.coreFiles[pathKey];
+      }
     }
-    return "";
+    return null;
   };
 
   setPhpReady = () => this.setState({ phpReady: true });
