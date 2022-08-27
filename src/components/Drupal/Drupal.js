@@ -72,10 +72,14 @@ export default class Drupal extends React.Component {
 
   readFile = (path, cwd, _this) => {
     if (this.state.ready) {
-      path = path[0] == "/" ? path.substring(1) : path;
+      //path = path[0] == "/" ? path.substring(1) : path;
       let pathKey = this.corePrefix + path;
       if (this.coreFiles[pathKey]) {
+        console.debug("readFile (true)", path, cwd);
         return this.coreFiles[pathKey];
+      }
+      else {
+        console.debug("readFile (false)", path, cwd);
       }
     }
     return null;

@@ -33,12 +33,21 @@ export default class Php extends React.Component {
     },
     onFileOpen: function (path, fs) {
       var createDataFile = this["FS_createDataFile"];
-      var data = this.readFile(path, fs.cwd(), this.this);
-      var node =
-        data != null
-          ? createDataFile(fs.cwd(), path, data, true, true, true)
-          : undefined;
-      console.debug("onFileOpen", path, node, data ? data.length : null);
+      var cwd = fs.cwd();
+      var path_rel = path.replace(cwd + "/", "");
+      var data = this.readFile(path_rel, cwd, this.this);
+      var node = undefined;
+      if (data != null) {
+        fs.mkdirTree(path.substring(0, path.lastIndexOf("/")));
+        node = createDataFile(cwd, path_rel, data, true, true, true);
+      }
+      console.debug(
+        "onFileOpen",
+        path_rel,
+        cwd,
+        node,
+        data ? data.length : null
+      );
       return node;
     },
     preInit: [this.onPreInit],
@@ -59,6 +68,7 @@ export default class Php extends React.Component {
     setStatus: function (status) {
       console.debug(status);
     },
+    // stderr: function (char) { console.error(String.fromCharCode(char)); },
     this: this,
     thisProgram: "NextJS",
     // "locateFile": function(file, size) { return "WASM"; },
@@ -133,20 +143,6 @@ export default class Php extends React.Component {
 
   onPreRun() {
     console.debug("preRun");
-  }
-
-  php_files() {
-    if (!this.state.pending && this.state.output == "") {
-      this.php
-        .run(
-          "<?php" +
-            '$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("."));' +
-            'foreach ($it as $name => $entry) { echo $name . "<br/>"; }'
-        )
-        .then((retVal) => {
-          this.setState({ pending: true });
-        });
-    }
   }
 
   php_hello() {
