@@ -1,6 +1,6 @@
-# Drupal8-demo
+# Drupal demo
 
-Drupal 8 Demo in a web browser
+Drupal Demo in a web browser
 
 In progress...
 
