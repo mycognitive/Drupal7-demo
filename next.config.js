@@ -26,7 +26,7 @@ const nextConfig = {
       new CopyPlugin({
         patterns: [
           {
-            from: "./build/drupal-6.38.zip",
+            from: "./build/drupal-7.91.zip",
             to: "./static/build/",
           },
           {
