@@ -33,7 +33,7 @@ $_SERVER['PHP_SELF']        = $docroot . '/' . $script;
 
 chdir($docroot);
 define('DRUPAL_ROOT', getcwd());
-//require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
+//require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 
 echo "Hello, world!";
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);

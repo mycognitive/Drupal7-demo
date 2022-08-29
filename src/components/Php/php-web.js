@@ -38,8 +38,8 @@ var PHP = (function () {
         } else {
           throw "using preloaded data can only be done on a web page or in a web worker";
         }
-        var PACKAGE_NAME = "../../build/drupal-8.9.20.zip";
-        var REMOTE_PACKAGE_BASE = "_next/static/build/drupal-8.9.20.zip";
+        var PACKAGE_NAME = "../../build/drupal-6.38.zip";
+        var REMOTE_PACKAGE_BASE = "_next/static/build/drupal-6.38.zip";
         if (
           typeof Module["locateFilePackage"] === "function" &&
           !Module["locateFile"]
@@ -200,11 +200,11 @@ var PHP = (function () {
               DataRequest.prototype.requests[files[i].filename].onload();
             }
             Module["removeRunDependency"](
-              "datafile_drupal-8.9.20.zip"
+              "datafile_drupal-6.38.zip"
             );
           }
           Module["addRunDependency"](
-            "datafile_drupal-8.9.20.zip"
+            "datafile_drupal-6.38.zip"
           );
           if (!Module.preloadResults) Module.preloadResults = {};
           Module.preloadResults[PACKAGE_NAME] = { fromCache: false };

@@ -40,7 +40,7 @@ export default class Drupal extends React.Component {
   async loadDrupalFiles() {
     var timeLoadZipStart = new Date();
     // GET request using fetch with set headers.
-    let data = fetch("_next/static/build/drupal-8.9.20.zip", {
+    let data = fetch("_next/static/build/drupal-6.38.zip", {
       "Content-Type": "application/zip",
       Encoding: "binary",
     })
