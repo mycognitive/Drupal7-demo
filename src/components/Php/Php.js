@@ -28,6 +28,8 @@ export default class Php extends React.Component {
     noInitialRun: false,
     onAbort: this.onAbort,
     onExit: this.onExit,
+    //onPreInit: this.onPreInit,
+    //onPreRun: this.onPreRun,
     onRuntimeInitialized: function () {
       console.debug("onRuntimeInitialized");
     },
@@ -51,7 +53,7 @@ export default class Php extends React.Component {
       return node;
     },
     preInit: [this.onPreInit],
-    preRun: [this.onPreRun],
+    preRun: [(mod) => this.onPreRun(mod)],
     preloadPlugins: {
       handleDrupal: function (byteArray, fullname, finish, f) {
         console.debug("preloadPlugins", fullname);
@@ -68,7 +70,7 @@ export default class Php extends React.Component {
     setStatus: function (status) {
       console.debug(status);
     },
-    // stderr: function (char) { console.error(String.fromCharCode(char)); },
+    stderr: this.readStdErrChar,
     this: this,
     thisProgram: "NextJS",
     // "locateFile": function(file, size) { return "WASM"; },
@@ -118,8 +120,8 @@ export default class Php extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.ready != this.state.ready) {
       if (this.state.ready) {
-        if (this.props.index != undefined) {
-          this.php_run(this.props.index);
+        if (this.props.indexFile != undefined) {
+          this.php_run(this.props.indexFile);
         } else {
           this.php_info();
         }
@@ -141,8 +143,23 @@ export default class Php extends React.Component {
     console.debug("preInit");
   }
 
-  onPreRun() {
-    console.debug("preRun");
+  onPreRun(module) {
+    // Define initial directory structure.
+    module["FS_createPath"]("/home/web_user", "modules", true, true);
+    module["FS_createPath"]("/home/web_user", "sites", true, true);
+    module["FS_createPath"]("/home/web_user/modules", "system", true, true);
+    module["FS_createPath"]("/home/web_user/sites", "default", true, true);
+    if (this.props.settingsFile != undefined) {
+      module["FS_createDataFile"](
+        "/home/web_user/sites/default",
+        "settings.php",
+        this.props.settingsFile,
+        true,
+        false,
+        false
+      );
+    }
+    //module["FS_createPreloadedFile"]("/home/web_user/sites/default", "settings.php", "file://sites/default/settings.php", true, false, true, true, true, false, true);
   }
 
   php_hello() {
@@ -182,6 +199,10 @@ export default class Php extends React.Component {
 
   readFile(path, cwd, _this) {
     return _this.props.readFile(path, cwd, _this);
+  }
+
+  readStdErrChar(chr) {
+    this.state.error += String.fromCharCode(char);
   }
 
   render() {

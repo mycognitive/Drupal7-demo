@@ -1,6 +1,7 @@
 import Php from "../Php/Php.js";
 import React from "react";
 import indexFile from "./index.php";
+import settingsFile from "./settings.php";
 import styles from "./Drupal.module.css";
 import { unzipSync } from "fflate";
 
@@ -77,8 +78,7 @@ export default class Drupal extends React.Component {
       if (this.coreFiles[pathKey]) {
         console.debug("readFile (true)", path, cwd);
         return this.coreFiles[pathKey];
-      }
-      else {
+      } else {
         console.debug("readFile (false)", path, cwd);
       }
     }
@@ -92,10 +92,11 @@ export default class Drupal extends React.Component {
     return (
       <div className={styles.drupal}>
         <Php
-          index={indexFile}
+          indexFile={indexFile}
           readFile={this.readFile}
           setReady={this.setPhpReady}
           setRef={this.setPhpRef}
+          settingsFile={settingsFile}
         />
       </div>
     );

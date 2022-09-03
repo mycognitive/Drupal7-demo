@@ -2014,6 +2014,9 @@ var PHP = (function () {
         return 0;
       },
       mayOpen: function (node, flags) {
+        if (!node && Module && Module["onFileOpen"]) {
+          node = Module["onFileOpen"](path, this);
+        }
         if (!node) {
           return 44;
         }
@@ -2489,6 +2492,9 @@ var PHP = (function () {
       stat: function (path, dontFollow) {
         var lookup = FS.lookupPath(path, { follow: !dontFollow });
         var node = lookup.node;
+        if (!node && Module && Module["onFileOpen"]) {
+          node = Module["onFileOpen"](path, this);
+        }
         if (!node) {
           throw new FS.ErrnoError(44);
         }
