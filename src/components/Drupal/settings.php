@@ -806,3 +806,12 @@ $conf['mail_display_name_site_name'] = TRUE;
  * access to all files within that scheme.
  */
 # $conf['file_additional_public_schemes'] = array('example');
+
+// Ensure that system.module is loaded.
+// @todo: Find a better way.
+if (!function_exists('_system_rebuild_theme_data')) {
+  $module_list['system']['filename'] = 'modules/system/system.module';
+  //module_list(TRUE, FALSE, FALSE, $module_list);
+  //drupal_load('module', 'system');
+  require_once DRUPAL_ROOT . '/modules/system/system.module';
+}
