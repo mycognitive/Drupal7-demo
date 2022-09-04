@@ -23,7 +23,7 @@
     "dev": "next dev",
     "export": "next export -o docs",
     "lint": "next lint",
-    "postinstall": "cp -v node_modules/php-wasm/php-web.* src/public/",
+    "postinstall": "cp -rv node_modules/php-wasm/php-web.* src/public/",
     "prebuild": "node postbuild.js",
     "start": "next start"
   },

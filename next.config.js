@@ -42,11 +42,11 @@ module.exports = {
           },
           {
             from: "./node_modules/php-wasm/php-web.wasm",
-            to: "./static/chunks/",
+            to: "./static/php-wasm/",
           },
           {
-            from: "./node_modules/php-wasm/php-web-drupal.wasm",
-            to: "./static/chunks/",
+            from: "./vendor/drupal/drupal",
+            to: "./static/drupal/",
           },
         ],
       }),

@@ -21,6 +21,17 @@ export default class Php extends React.Component {
     getPreloadedPackage: function (pkg_name, pkg_size) {
       return false;
     },
+    locateFile: function (file, path) {
+      debugger;
+      switch (file) {
+        case "drupal-core":
+          return "_next/static/build/drupal-7.91.zip";
+        case "php-web.wasm":
+          return "_next/static/php-wasm/php-web.wasm";
+        default:
+          console.debug(file, path);
+      }
+    },
     noExitRuntime: false,
     noInitialRun: false,
     onAbort: this.onAbort,
@@ -70,8 +81,9 @@ export default class Php extends React.Component {
     stderr: this.readStdErrChar,
     this: this,
     thisProgram: "NextJS",
-    // "locateFile": function(file, size) { return "WASM"; },
-    // "wasmBinary": "foo",
+    //wasmBinary: "_next/static/php-wasm/php-web.wasm",
+    //wasmBinary: this.readBinary("/_next/static/php-wasm/php-web.wasm"),
+    //wasmBinary: (url) => { var xhr = new XMLHttpRequest(); xhr.open("GET", url, false); xhr.responseType = "arraybuffer"; xhr.send(null); return xhr.response; },
   };
   state = {
     error: "",
@@ -199,7 +211,8 @@ export default class Php extends React.Component {
 
   readStdErrChar(chr) {
     this.setState({
-      error: this.state.error + String.fromCharCode(char) });
+      error: this.state.error + String.fromCharCode(char),
+    });
   }
 
   render() {

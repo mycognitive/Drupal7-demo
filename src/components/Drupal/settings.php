@@ -317,7 +317,7 @@ $drupal_hash_salt = '';
  * for you.
  */
 # $base_url = 'http://www.example.com';  // NO trailing slash!
-$base_url = "http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}";
+$base_url = "http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/_next/static/drupal";
 
 /**
  * PHP settings:

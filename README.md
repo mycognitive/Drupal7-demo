@@ -4,10 +4,16 @@ Drupal Demo in a web browser
 
 In progress...
 
+## Prerequisites
+
+- Composer
+- Npm
+
 ## Build
 
 Run:
 
+1. `composer install`
 1. `npm install`
 1. `npm run build`
 

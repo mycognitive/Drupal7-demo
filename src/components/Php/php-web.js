@@ -38,8 +38,8 @@ var PHP = (function () {
         } else {
           throw "using preloaded data can only be done on a web page or in a web worker";
         }
-        var PACKAGE_NAME = "../../build/drupal-7.91.zip";
-        var REMOTE_PACKAGE_BASE = "_next/static/build/drupal-7.91.zip";
+        var PACKAGE_NAME = "package-name";
+        var REMOTE_PACKAGE_BASE = "drupal-core";
         if (
           typeof Module["locateFilePackage"] === "function" &&
           !Module["locateFile"]
@@ -145,9 +145,6 @@ var PHP = (function () {
           function assert(check, msg) {
             if (!check) throw msg + new Error().stack;
           }
-          Module["FS_createPath"]("/", "preload", true, true);
-          Module["FS_createPath"]("/preload", "drupal", true, true);
-          Module["FS_createPath"]("/preload", "Zend", true, true);
           function DataRequest(start, end, audio) {
             this.start = start;
             this.end = end;
