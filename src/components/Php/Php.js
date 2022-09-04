@@ -198,7 +198,8 @@ export default class Php extends React.Component {
   }
 
   readStdErrChar(chr) {
-    this.state.error += String.fromCharCode(char);
+    this.setState({
+      error: this.state.error + String.fromCharCode(char) });
   }
 
   render() {

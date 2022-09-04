@@ -1,12 +1,23 @@
 /** @type {import('next').NextConfig} */
 const CopyPlugin = require("copy-webpack-plugin");
-const nextConfig = {
+module.exports = {
+  //assetPrefix: '/static',
+  //basePath: '/docs',
+  experimental: {
+    images: {
+      unoptimized: true,
+    },
+  },
   reactStrictMode: true,
   async rewrites() {
     return [
       {
         source: "/admin/(.*)",
         destination: "/drupal",
+      },
+      {
+        source: "/_next/static/:path*",
+        destination: "/static/:path*",
       },
     ];
   },
@@ -43,5 +54,3 @@ const nextConfig = {
     return config;
   },
 };
-
-module.exports = nextConfig;

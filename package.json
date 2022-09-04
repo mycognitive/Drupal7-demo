@@ -21,10 +21,10 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "export": "next export -o docs",
     "lint": "next lint",
     "postinstall": "cp -v node_modules/php-wasm/php-web.* src/public/",
     "prebuild": "node postbuild.js",
-    "prod": "next export",
     "start": "next start"
   },
   "version": "0.1.0"
