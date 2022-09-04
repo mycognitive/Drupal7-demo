@@ -22,7 +22,6 @@ export default class Php extends React.Component {
       return false;
     },
     locateFile: function (file, path) {
-      debugger;
       switch (file) {
         case "drupal-core":
           return "_next/static/build/drupal-7.91.zip";
