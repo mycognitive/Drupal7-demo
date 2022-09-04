@@ -9,9 +9,6 @@ export class PhpWeb extends PhpBase {
   constructor(args = {}) {
     super(PhpBinary, args);
   }
-  updateFiles(files_new) {
-    this.files = this.files.concat(files_new);
-  }
 }
 
 export default class Php extends React.Component {
@@ -104,7 +101,6 @@ export default class Php extends React.Component {
         });
         this.php.addEventListener("ready", () => {
           this.setState({ ready: true });
-          this.php.updateFiles(["foo"]);
           console.debug("ready", this.php);
         });
         this.php.addEventListener("custom", (event) => {
@@ -125,8 +121,8 @@ export default class Php extends React.Component {
         } else {
           this.php_info();
         }
-        this.props.setReady();
-        this.props.setRef(this.phpRef);
+        this.props.setReadyFn();
+        this.props.setRefFn(this.phpRef);
       }
     }
   }
@@ -198,7 +194,7 @@ export default class Php extends React.Component {
   }
 
   readFile(path, cwd, _this) {
-    return _this.props.readFile(path, cwd, _this);
+    return _this.props.readFileFn(path, cwd, _this);
   }
 
   readStdErrChar(chr) {

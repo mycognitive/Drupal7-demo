@@ -41,7 +41,7 @@ export default class Drupal extends React.Component {
   async loadDrupalFiles() {
     var timeLoadZipStart = new Date();
     // GET request using fetch with set headers.
-    let data = fetch("_next/static/build/drupal-7.91.zip", {
+    let data = fetch("/_next/static/build/drupal-7.91.zip", {
       "Content-Type": "application/zip",
       Encoding: "binary",
     })
@@ -89,16 +89,25 @@ export default class Drupal extends React.Component {
   setPhpRef = (ref) => this.setState({ phpRef: ref });
 
   render() {
-    return (
-      <div className={styles.drupal}>
-        <Php
-          indexFile={indexFile}
-          readFile={this.readFile}
-          setReady={this.setPhpReady}
-          setRef={this.setPhpRef}
-          settingsFile={settingsFile}
-        />
-      </div>
-    );
+    if (this.props.loadJsFile) {
+      return(
+        <script language="javascript">
+          {this.readFile(this.props.loadJsFile)}
+        </script>
+      )
+    }
+    else {
+      return (
+        <div className={styles.drupal}>
+          <Php
+            indexFile={this.props.indexFile ? this.props.indexFile : indexFile}
+            readFileFn={this.readFile}
+            setReadyFn={this.setPhpReady}
+            setRefFn={this.setPhpRef}
+            settingsFile={this.props.settingsFile ? this.props.settingsFile : settingsFile}
+          />
+        </div>
+      );
+    }
   }
 }
