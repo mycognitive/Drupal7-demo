@@ -1,0 +1,43 @@
+{
+    "authors": [
+        {
+            "name": "kenorb",
+            "email": "kenorb@users.noreply.github.com"
+        }
+    ],
+    "conflict": {
+        "drupal/core": "8.*"
+    },
+    "description": "Drupal 7 demo",
+    "license": "Apache",
+    "minimum-stability": "dev",
+    "name": "mycognitive/drupal7-demo",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/7"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "ext-curl": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-xml": "*",
+        "composer/installers": "^1.9",
+        "composer/semver": "^1.4",
+        "cweagans/composer-patches": "^1.7",
+        "drupal-composer/preserve-paths": "^0.1.6",
+        "drupal/composer_autoloader": "^1.0",
+        "drupal/drupal": "^7.62",
+        "symfony/filesystem": "~2.7 || ^3",
+        "webflo/drupal-finder": "^1.2.1"
+    },
+    "type": "project",
+    "require": {
+        "drupal/drupal": "^7.91"
+    }
+}
